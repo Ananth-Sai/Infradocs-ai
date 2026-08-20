@@ -1,0 +1,64 @@
+[
+  {
+    "question": "An Enterprise-tier client is sending 550 requests per second. Will they hit the burst limit, and if so, what HTTP error and recommended remediation should they expect?",
+    "answerable": true,
+    "actual_answer": "Based on the provided context, an Enterprise-tier client has a burst limit of 500 requests per second [source: platform_overview.md]. Since they are sending 550 requests per second, they exceed this burst limit. \n\nWhen an organization quota or rate limit is reached, the documents specify that clients receive the `ERR_RATE_LIMIT_EXCEEDED (HTTP 429)` error [source: troubleshooting_and_faq.md]. The recommended remediation is for clients to inspect the `X-RateLimit-Reset` header and implement exponential backoff with jitter [source: troubleshooting_and_faq.md]. \n\nHowever, the provided documents do not explicitly state that hitting the *burst limit specifically* triggers this exact HTTP error code (they link `ERR_RATE_LIMIT_EXCEEDED` to reaching the \"organization quota\") [source: troubleshooting_and_faq.md], though they do list `X-RateLimit-Limit`, `X-RateLimit-Remaining`, and `X-RateLimit-Reset` as the rate limit headers returned for API endpoints enforcing these limits [source: platform_overview.md].",
+    "expected_answer": "Yes \u2014 the Enterprise tier burst limit is 500 requests/sec, so 550 req/sec exceeds it. This triggers ERR_RATE_LIMIT_EXCEEDED (HTTP 429). The client should inspect the X-RateLimit-Reset header and implement exponential backoff with jitter.",
+    "verdict": "CORRECT",
+    "source_correct": true,
+    "sources_used": [
+      "deployment_guide.md",
+      "platform_overview.md",
+      "troubleshooting_and_faq.md"
+    ]
+  },
+  {
+    "question": "If a microservice's Vault lease isn't refreshed during automated secret rotation, what error does it hit, and how does that relate to the rotation schedule?",
+    "answerable": true,
+    "actual_answer": "If a microservice fails to refresh its Vault lease within 5 minutes of expiration during automated secret rotation, it incurs the error `ERR_VAULT_LEASE_REVOKED (HTTP 503)` [source: troubleshooting_and_faq.md]. \n\nRegarding how this relates to the rotation schedule, the provided documents specify that static secrets are automatically rotated every 30 days [source: deployment_guide.md], and they specify that `ERR_VAULT_LEASE_REVOKED (HTTP 503)` occurs during automated secret rotation if the microservice fails to refresh its Vault lease within 5 minutes of expiration [source: troubleshooting_and_faq.md]. However, the documents do not state or establish a broader causal or scheduling relationship between the 30-day static secret rotation schedule and the 5-minute lease expiration/refresh window.",
+    "expected_answer": "Secrets are automatically rotated every 30 days via Vault and the External Secrets Operator. If a service fails to refresh its Vault lease within 5 minutes of expiration during that rotation, it hits ERR_VAULT_LEASE_REVOKED (HTTP 503). Fix: restart the pod or trigger an ESO sync.",
+    "verdict": "CORRECT",
+    "source_correct": true,
+    "sources_used": [
+      "deployment_guide.md",
+      "platform_overview.md",
+      "troubleshooting_and_faq.md"
+    ]
+  },
+  {
+    "question": "If eu-central-1 experiences degraded performance with p95 latency at 600ms, what severity level and response SLA applies, and does this affect async replication to us-east-1?",
+    "answerable": true,
+    "actual_answer": "If single region degradation occurs with elevated latency exceeding 500ms p95, this constitutes a **Severity 2 (Degraded Performance)** incident, which carries an initial response SLA of **under 1 hour** [source: troubleshooting_and_faq.md]. \n\nWhile the context states that data replication between `us-east-1` and `eu-central-1` occurs asynchronously with an average replication lag of under 45 milliseconds [source: platform_overview.md], the provided documents do not state or establish whether a performance degradation in `eu-central-1` affects this async replication.",
+    "expected_answer": "This is a Severity 2 incident (single-region degradation, p95 latency exceeding 500ms), with an initial response SLA under 1 hour. The docs don't state that regional degradation affects replication lag \u2014 replication lag is described separately (averaging under 45ms) with no stated causal link to regional performance incidents. A correct answer should not assert replication is affected.",
+    "verdict": "CORRECT",
+    "source_correct": true,
+    "sources_used": [
+      "platform_overview.md",
+      "troubleshooting_and_faq.md"
+    ]
+  },
+  {
+    "question": "During Phase 2 of a canary rollout, if p99 latency exceeds 120ms, does the system automatically roll back to the previous stable revision?",
+    "answerable": true,
+    "actual_answer": "During Phase 2 of a canary rollout, the context states that traffic is increased for 30 minutes if p99 latency does not exceed 120ms [source: deployment_guide.md]. However, the documents do not state or establish that the system automatically rolls back if p99 latency exceeds 120ms during this phase [source: deployment_guide.md]. The documents specify that an automatic rollback occurs if HTTP 5xx responses exceed 1% over a 5-minute moving window [source: deployment_guide.md].",
+    "expected_answer": "Not necessarily, per the docs. Automatic rollback is explicitly tied only to HTTP 5xx responses exceeding 1% over a 5-minute moving window. Exceeding the Phase 2 latency threshold (120ms) is described as a gate that prevents promotion to Phase 3, but the docs do not state that exceeding it alone triggers an automatic rollback. A correct answer should not conflate the two.",
+    "verdict": "CORRECT",
+    "source_correct": true,
+    "sources_used": [
+      "deployment_guide.md",
+      "troubleshooting_and_faq.md"
+    ]
+  },
+  {
+    "question": "What escalation path applies if the Nexus Identity Service goes down in the ap-southeast-1 region?",
+    "answerable": false,
+    "actual_answer": "I don't have enough information to answer that",
+    "expected_answer": null,
+    "verdict": "REFUSED",
+    "source_correct": true,
+    "sources_used": [
+      "platform_overview.md",
+      "troubleshooting_and_faq.md"
+    ]
+  }
+]

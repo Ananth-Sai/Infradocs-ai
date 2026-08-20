@@ -1,0 +1,409 @@
+[
+  {
+    "question": "What tools power the GitOps deployment workflow in ICP?",
+    "answerable": true,
+    "actual_answer": "The GitOps deployment workflow in ICP is powered by ArgoCD and GitHub Actions [source: deployment_guide.md].",
+    "expected_answer": "ArgoCD and GitHub Actions.",
+    "verdict": "CORRECT",
+    "source_correct": true,
+    "sources_used": [
+      "deployment_guide.md",
+      "platform_overview.md"
+    ]
+  },
+  {
+    "question": "Which Kubernetes versions are used for production target clusters?",
+    "answerable": true,
+    "actual_answer": "Production workloads run on managed Kubernetes versions EKS v1.30 and GKE v1.29 [source: deployment_guide.md].",
+    "expected_answer": "EKS v1.30 and GKE v1.29.",
+    "verdict": "CORRECT",
+    "source_correct": true,
+    "sources_used": [
+      "troubleshooting_and_faq.md",
+      "deployment_guide.md",
+      "platform_overview.md"
+    ]
+  },
+  {
+    "question": "What are the requirements and duration for Phase 1 of canary deployment?",
+    "answerable": true,
+    "actual_answer": "For Phase 1 (Canary 10%) of the canary deployment, the requirements and duration are:\n- An initial traffic split for 15 minutes [source: deployment_guide.md].\n- The error rate threshold must remain below 0.1% [source: deployment_guide.md].",
+    "expected_answer": "10% traffic split for 15 minutes with an error rate threshold below 0.1%.",
+    "verdict": "CORRECT",
+    "source_correct": true,
+    "sources_used": [
+      "deployment_guide.md",
+      "troubleshooting_and_faq.md"
+    ]
+  },
+  {
+    "question": "What triggers an automatic rollback during a canary deployment?",
+    "answerable": true,
+    "actual_answer": "An automatic rollback is triggered if HTTP 5xx responses exceed 1% over a 5-minute moving window [source: deployment_guide.md].",
+    "expected_answer": "If HTTP 5xx responses exceed 1% over a 5-minute moving window.",
+    "verdict": "CORRECT",
+    "source_correct": true,
+    "sources_used": [
+      "deployment_guide.md",
+      "troubleshooting_and_faq.md"
+    ]
+  },
+  {
+    "question": "How frequently are static secrets like database credentials rotated?",
+    "answerable": true,
+    "actual_answer": "Static secrets (such as database credentials) are automatically rotated every 30 days [source: deployment_guide.md].",
+    "expected_answer": "Every 30 days.",
+    "verdict": "CORRECT",
+    "source_correct": true,
+    "sources_used": [
+      "troubleshooting_and_faq.md",
+      "deployment_guide.md",
+      "platform_overview.md"
+    ]
+  },
+  {
+    "question": "What encryption algorithm is used for secrets at rest in ICP?",
+    "answerable": true,
+    "actual_answer": "All secrets at rest are encrypted with AES-256-GCM using AWS KMS / GCP Cloud KMS customer-managed keys (CMK) [source: deployment_guide.md].",
+    "expected_answer": "AES-256-GCM using AWS KMS / GCP Cloud KMS customer-managed keys (CMK).",
+    "verdict": "CORRECT",
+    "source_correct": true,
+    "sources_used": [
+      "troubleshooting_and_faq.md",
+      "deployment_guide.md",
+      "platform_overview.md"
+    ]
+  },
+  {
+    "question": "What role does the eu-central-1 region play in ICP architecture?",
+    "answerable": true,
+    "actual_answer": "The `eu-central-1` (Frankfurt) region serves as the European Union dedicated data plane with GDPR-compliant data residency isolation [source: platform_overview.md]. Additionally, data replication occurs asynchronously between `us-east-1` and `eu-central-1` with an average replication lag of under 45 milliseconds [source: platform_overview.md].",
+    "expected_answer": "European Union dedicated data plane with GDPR-compliant data residency isolation.",
+    "verdict": "CORRECT",
+    "source_correct": true,
+    "sources_used": [
+      "troubleshooting_and_faq.md",
+      "deployment_guide.md",
+      "platform_overview.md"
+    ]
+  },
+  {
+    "question": "What is the average replication lag between us-east-1 and eu-central-1?",
+    "answerable": true,
+    "actual_answer": "The average replication lag between `us-east-1` and `eu-central-1` is under 45 milliseconds [source: platform_overview.md].",
+    "expected_answer": "Under 45 milliseconds.",
+    "verdict": "CORRECT",
+    "source_correct": true,
+    "sources_used": [
+      "deployment_guide.md",
+      "troubleshooting_and_faq.md",
+      "platform_overview.md"
+    ]
+  },
+  {
+    "question": "What identity service enforces authentication in ICP?",
+    "answerable": true,
+    "actual_answer": "Authentication in ICP is enforced through the Nexus Identity Service (NIS) [source: platform_overview.md].",
+    "expected_answer": "Nexus Identity Service (NIS).",
+    "verdict": "CORRECT",
+    "source_correct": true,
+    "sources_used": [
+      "troubleshooting_and_faq.md",
+      "deployment_guide.md",
+      "platform_overview.md"
+    ]
+  },
+  {
+    "question": "What is the validity duration of session tokens and refresh tokens?",
+    "answerable": true,
+    "actual_answer": "Based on the provided context:\n\n* **Session Tokens:** Have a strict validity duration of 60 minutes [source: platform_overview.md]. (Client access tokens also have a default lifetime of 60 minutes [source: troubleshooting_and_faq.md]).\n* **Refresh Tokens:** Expire after 14 days of inactivity [source: platform_overview.md].",
+    "expected_answer": "Session tokens are valid for 60 minutes; refresh tokens expire after 14 days of inactivity.",
+    "verdict": "CORRECT",
+    "source_correct": true,
+    "sources_used": [
+      "deployment_guide.md",
+      "troubleshooting_and_faq.md",
+      "platform_overview.md"
+    ]
+  },
+  {
+    "question": "What are the four default roles in InfraDocs Cloud Platform RBAC?",
+    "answerable": true,
+    "actual_answer": "The four default roles in InfraDocs Cloud Platform RBAC are `Viewer`, `Operator`, `SecurityAdmin`, and `SuperAdmin` [source: platform_overview.md].",
+    "expected_answer": "Viewer, Operator, SecurityAdmin, and SuperAdmin.",
+    "verdict": "CORRECT",
+    "source_correct": true,
+    "sources_used": [
+      "troubleshooting_and_faq.md",
+      "deployment_guide.md",
+      "platform_overview.md"
+    ]
+  },
+  {
+    "question": "What are the rate limits for the Enterprise Tier API?",
+    "answerable": true,
+    "actual_answer": "For the Enterprise Tier, the API rate limit is 10,000 requests per minute per organization, with a burst limit of 500 requests per second [source: platform_overview.md].",
+    "expected_answer": "10,000 requests per minute per organization with a burst limit of 500 requests/sec.",
+    "verdict": "CORRECT",
+    "source_correct": true,
+    "sources_used": [
+      "troubleshooting_and_faq.md",
+      "deployment_guide.md",
+      "platform_overview.md"
+    ]
+  },
+  {
+    "question": "What endpoint should clients call to exchange an expired token?",
+    "answerable": true,
+    "actual_answer": "Clients should exchange their refresh token at the `/v2/auth/refresh` endpoint [source: troubleshooting_and_faq.md].",
+    "expected_answer": "/v2/auth/refresh",
+    "verdict": "CORRECT",
+    "source_correct": true,
+    "sources_used": [
+      "troubleshooting_and_faq.md",
+      "deployment_guide.md",
+      "platform_overview.md"
+    ]
+  },
+  {
+    "question": "How should a client mitigate an ERR_RATE_LIMIT_EXCEEDED HTTP 429 error?",
+    "answerable": true,
+    "actual_answer": "When an organization's quota has been reached resulting in an `ERR_RATE_LIMIT_EXCEEDED (HTTP 429)` error, clients should inspect the `X-RateLimit-Reset` header and implement exponential backoff with jitter [source: troubleshooting_and_faq.md].",
+    "expected_answer": "Inspect the X-RateLimit-Reset header and implement exponential backoff with jitter.",
+    "verdict": "CORRECT",
+    "source_correct": true,
+    "sources_used": [
+      "troubleshooting_and_faq.md",
+      "platform_overview.md"
+    ]
+  },
+  {
+    "question": "What causes an ERR_VAULT_LEASE_REVOKED HTTP 503 error?",
+    "answerable": true,
+    "actual_answer": "An `ERR_VAULT_LEASE_REVOKED` (HTTP 503) error occurs during automated secret rotation if the microservice fails to refresh its Vault lease within 5 minutes of expiration [source: troubleshooting_and_faq.md].",
+    "expected_answer": "The microservice fails to refresh its Vault lease within 5 minutes of expiration during secret rotation.",
+    "verdict": "CORRECT",
+    "source_correct": true,
+    "sources_used": [
+      "deployment_guide.md",
+      "troubleshooting_and_faq.md",
+      "platform_overview.md"
+    ]
+  },
+  {
+    "question": "What is the initial response SLA for a Severity 1 Critical Outage?",
+    "answerable": true,
+    "actual_answer": "The initial response SLA for a Severity 1 Critical Outage is under 15 minutes [source: troubleshooting_and_faq.md].",
+    "expected_answer": "Under 15 minutes with 24/7 paging to the primary On-Call SRE team.",
+    "verdict": "CORRECT",
+    "source_correct": true,
+    "sources_used": [
+      "deployment_guide.md",
+      "troubleshooting_and_faq.md",
+      "platform_overview.md"
+    ]
+  },
+  {
+    "question": "What tool manages PostgreSQL cluster failover?",
+    "answerable": true,
+    "actual_answer": "PostgreSQL cluster failover is managed by Patroni [source: troubleshooting_and_faq.md].",
+    "expected_answer": "Patroni with Raft-based consensus.",
+    "verdict": "CORRECT",
+    "source_correct": true,
+    "sources_used": [
+      "deployment_guide.md",
+      "troubleshooting_and_faq.md",
+      "platform_overview.md"
+    ]
+  },
+  {
+    "question": "What is the maximum expected downtime during an ungraceful PostgreSQL primary failure?",
+    "answerable": true,
+    "actual_answer": "The maximum expected downtime during an ungraceful primary node failure of the PostgreSQL cluster is 28 seconds [source: troubleshooting_and_faq.md].",
+    "expected_answer": "28 seconds.",
+    "verdict": "CORRECT",
+    "source_correct": true,
+    "sources_used": [
+      "deployment_guide.md",
+      "troubleshooting_and_faq.md",
+      "platform_overview.md"
+    ]
+  },
+  {
+    "question": "An Enterprise-tier client is sending 550 requests per second. Will they hit the burst limit, and if so, what HTTP error and recommended remediation should they expect?",
+    "answerable": true,
+    "actual_answer": "Yes, they will hit the burst limit. The Enterprise Tier burst limit is 500 requests per second [source: platform_overview.md], so sending 550 requests per second exceeds this limit.\n\nIf they exceed the rate limit, they should expect:\n- **HTTP Error:** `ERR_RATE_LIMIT_EXCEEDED (HTTP 429)` [source: troubleshooting_and_faq.md].\n- **Recommended Remediation:** Inspect the `X-RateLimit-Reset` header and implement exponential backoff with jitter [source: troubleshooting_and_faq.md].",
+    "expected_answer": "Yes \u2014 the Enterprise tier burst limit is 500 requests/sec, so 550 req/sec exceeds it. This triggers ERR_RATE_LIMIT_EXCEEDED (HTTP 429). The client should inspect the X-RateLimit-Reset header and implement exponential backoff with jitter.",
+    "verdict": "CORRECT",
+    "source_correct": true,
+    "sources_used": [
+      "troubleshooting_and_faq.md",
+      "deployment_guide.md",
+      "platform_overview.md"
+    ]
+  },
+  {
+    "question": "If a microservice's Vault lease isn't refreshed during automated secret rotation, what error does it hit, and how does that relate to the rotation schedule?",
+    "answerable": true,
+    "actual_answer": "If a microservice fails to refresh its Vault lease within 5 minutes of expiration during automated secret rotation, it encounters the error `ERR_VAULT_LEASE_REVOKED (HTTP 503)` [source: troubleshooting_and_faq.md, deployment_guide.md]. \n\nRegarding how this relates to the rotation schedule, the provided documents state that static secrets (such as database credentials) are automatically rotated every 30 days [source: deployment_guide.md], but they do not state or establish a specific causal link or scheduling relationship between the 30-day rotation schedule and the 5-minute lease refresh window or the `ERR_VAULT_LEASE_REVOKED` error.",
+    "expected_answer": "Static secrets are automatically rotated every 30 days via Vault and the External Secrets Operator. If a service fails to refresh its Vault lease within 5 minutes of expiration during that rotation, it hits ERR_VAULT_LEASE_REVOKED (HTTP 503).",
+    "verdict": "INCORRECT",
+    "source_correct": true,
+    "sources_used": [
+      "deployment_guide.md",
+      "troubleshooting_and_faq.md",
+      "platform_overview.md"
+    ]
+  },
+  {
+    "question": "If eu-central-1 experiences degraded performance with p95 latency at 600ms, what severity level and response SLA applies, and does this affect async replication to us-east-1?",
+    "answerable": true,
+    "actual_answer": "A Severity 2 incident (Degraded Performance) applies when there is single region degradation or elevated latency exceeding 500ms p95, which has an initial response SLA of under 1 hour [source: troubleshooting_and_faq.md]. \n\nRegarding the effect on asynchronous replication: the provided documents state that data replication between `us-east-1` and `eu-central-1` occurs asynchronously with an average replication lag of under 45 milliseconds [source: platform_overview.md], but the documents do not state or establish whether a performance degradation in `eu-central-1` affects this async replication.",
+    "expected_answer": "This is a Severity 2 incident (single-region degradation, p95 latency exceeding 500ms), with an initial response SLA under 1 hour. The docs don't state that regional degradation affects replication lag \u2014 replication lag is described separately (averaging under 45ms) with no stated causal link to regional performance incidents. A correct answer should not assert replication is affected.",
+    "verdict": "CORRECT",
+    "source_correct": true,
+    "sources_used": [
+      "deployment_guide.md",
+      "troubleshooting_and_faq.md",
+      "platform_overview.md"
+    ]
+  },
+  {
+    "question": "During Phase 2 of a canary rollout, if p99 latency exceeds 120ms, does the system automatically roll back to the previous stable revision?",
+    "answerable": true,
+    "actual_answer": "During Phase 2 of a canary rollout, the traffic split is increased for 30 minutes \"if p99 latency does not exceed 120ms\" [source: deployment_guide.md]. The context specifies that an automatic rollback occurs \"If HTTP 5xx responses exceed 1% over a 5-minute moving window\" [source: deployment_guide.md], but the documents do not state or establish that the system automatically rolls back if p99 latency exceeds 120ms during Phase 2.",
+    "expected_answer": "Not necessarily, per the docs. Automatic rollback is explicitly tied only to HTTP 5xx responses exceeding 1% over a 5-minute moving window. Exceeding the Phase 2 latency threshold (120ms) is described as a gate that prevents promotion to Phase 3, but the docs do not state that exceeding it alone triggers an automatic rollback. A correct answer should not conflate the two.",
+    "verdict": "CORRECT",
+    "source_correct": true,
+    "sources_used": [
+      "deployment_guide.md",
+      "troubleshooting_and_faq.md"
+    ]
+  },
+  {
+    "question": "What is InfraDocs Cloud's policy on remote work and expense reimbursement?",
+    "answerable": false,
+    "actual_answer": "I don't have enough information to answer that",
+    "expected_answer": null,
+    "verdict": "REFUSED",
+    "source_correct": true,
+    "sources_used": [
+      "troubleshooting_and_faq.md",
+      "deployment_guide.md",
+      "platform_overview.md"
+    ]
+  },
+  {
+    "question": "How do you configure Azure DevOps pipelines for ICP deployments?",
+    "answerable": false,
+    "actual_answer": "I don't have enough information to answer that",
+    "expected_answer": null,
+    "verdict": "REFUSED",
+    "source_correct": true,
+    "sources_used": [
+      "troubleshooting_and_faq.md",
+      "deployment_guide.md",
+      "platform_overview.md"
+    ]
+  },
+  {
+    "question": "What is the pricing model for storing objects in the S3 cold storage tier?",
+    "answerable": false,
+    "actual_answer": "I don't have enough information to answer that",
+    "expected_answer": null,
+    "verdict": "REFUSED",
+    "source_correct": true,
+    "sources_used": [
+      "deployment_guide.md",
+      "troubleshooting_and_faq.md",
+      "platform_overview.md"
+    ]
+  },
+  {
+    "question": "How do I upgrade MySQL read replicas in the Sydney region?",
+    "answerable": false,
+    "actual_answer": "I don't have enough information to answer that",
+    "expected_answer": null,
+    "verdict": "REFUSED",
+    "source_correct": true,
+    "sources_used": [
+      "troubleshooting_and_faq.md",
+      "deployment_guide.md",
+      "platform_overview.md"
+    ]
+  },
+  {
+    "question": "What are the guidelines for filing PTO during on-call rotations?",
+    "answerable": false,
+    "actual_answer": "I don't have enough information to answer that",
+    "expected_answer": null,
+    "verdict": "REFUSED",
+    "source_correct": true,
+    "sources_used": [
+      "troubleshooting_and_faq.md",
+      "deployment_guide.md",
+      "platform_overview.md"
+    ]
+  },
+  {
+    "question": "Which version of Java is required to run the local telemetry agent?",
+    "answerable": false,
+    "actual_answer": "I don't have enough information to answer that",
+    "expected_answer": null,
+    "verdict": "REFUSED",
+    "source_correct": true,
+    "sources_used": [
+      "deployment_guide.md",
+      "platform_overview.md"
+    ]
+  },
+  {
+    "question": "What escalation path applies if the Nexus Identity Service goes down in the ap-southeast-1 region?",
+    "answerable": false,
+    "actual_answer": "I don't have enough information to answer that",
+    "expected_answer": null,
+    "verdict": "REFUSED",
+    "source_correct": true,
+    "sources_used": [
+      "troubleshooting_and_faq.md",
+      "platform_overview.md"
+    ]
+  },
+  {
+    "question": "If a pod fails its Vault lease refresh during automated secret rotation, does Patroni trigger an automatic PostgreSQL failover to a read replica?",
+    "answerable": false,
+    "actual_answer": "The provided context specifies that `ERR_VAULT_LEASE_REVOKED (HTTP 503)` occurs during automated secret rotation if the microservice fails to refresh its Vault lease within 5 minutes of expiration, and that restarting the pod or triggering an ESO sync resolves this condition [source: troubleshooting_and_faq.md]. The context also specifies that PostgreSQL cluster failover is managed by Patroni with Raft-based consensus during an ungraceful primary node failure [source: troubleshooting_and_faq.md]. \n\nHowever, the documents do not state or establish a relationship between a pod failing its Vault lease refresh and Patroni triggering an automatic PostgreSQL failover.",
+    "expected_answer": null,
+    "verdict": "REFUSED",
+    "source_correct": true,
+    "sources_used": [
+      "deployment_guide.md",
+      "troubleshooting_and_faq.md"
+    ]
+  },
+  {
+    "question": "Can an Operator-role user bypass the Standard Tier 1,200 req/min API rate limit during a Severity 1 incident?",
+    "answerable": false,
+    "actual_answer": "The context specifies that API rate limiting is enforced based on the client's tier, with the Standard Tier limited to 1,200 requests per minute per organization [source: platform_overview.md]. It also states that every principal must belong to one of four default roles, including `Operator` [source: platform_overview.md], and outlines SLA and incident response for Severity 1 (Critical Outage) [source: troubleshooting_and_faq.md]. However, the provided documents do not state or establish whether an Operator-role user can bypass API rate limits during a Severity 1 incident.",
+    "expected_answer": null,
+    "verdict": "REFUSED",
+    "source_correct": true,
+    "sources_used": [
+      "troubleshooting_and_faq.md",
+      "platform_overview.md"
+    ]
+  },
+  {
+    "question": "Does ICP use Ed25519 signatures to sign Docker images built on GitHub Actions for ARM64 architecture?",
+    "answerable": false,
+    "actual_answer": "I don't have enough information to answer that.",
+    "expected_answer": null,
+    "verdict": "REFUSED",
+    "source_correct": true,
+    "sources_used": [
+      "troubleshooting_and_faq.md",
+      "deployment_guide.md",
+      "platform_overview.md"
+    ]
+  }
+]
