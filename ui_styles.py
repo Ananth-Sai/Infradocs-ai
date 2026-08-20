@@ -232,12 +232,16 @@ def format_citation_pills(text: str) -> str:
 
 
 def get_doc_content(filename: str) -> str:
-    """Read a document from docs/ for the sidebar explorer."""
+    """Read and format document content from docs/ for the sidebar explorer."""
+    from ingest import load_text
     path = os.path.join("docs", filename)
     if os.path.exists(path):
-        with open(path, "r", encoding="utf-8") as f:
-            return f.read()
+        try:
+            return load_text(path)
+        except Exception as e:
+            return f"Error previewing file: {e}"
     return "Document content unavailable."
+
 
 
 def get_relevance_badge(distance: float) -> str:

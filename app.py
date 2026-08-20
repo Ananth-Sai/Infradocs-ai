@@ -1,7 +1,9 @@
-import streamlit as st
+import os
 import time
-from index import search, hybrid_search
+import streamlit as st
+from index import search, hybrid_search, build_index, collection
 from answer import generate_with_fallback, PROMPT_TEMPLATE
+from ingest import SUPPORTED_EXTENSIONS
 from ui_styles import (
     CUSTOM_CSS,
     format_citation_pills,
@@ -53,9 +55,7 @@ st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
 st.title("⚡ InfraDocs AI — Cloud Infrastructure RAG")
 st.caption("High-precision Hybrid Retrieval (Dense Vector + BM25 Okapi + RRF) with Strict Grounded LLM Generation")
 
-
-
-# --- Sidebar Configuration & Knowledge Explorer ---
+# --- Sidebar Configuration & Document Manager ---
 with st.sidebar:
     st.header("⚙️ Search Engine Settings")
     retrieval_mode = st.radio(
@@ -74,20 +74,95 @@ with st.sidebar:
     )
 
     st.markdown("---")
-    st.subheader("📚 Knowledge Base Explorer")
-    st.caption("Inspect indexed source files in real-time:")
+    st.subheader("📤 Add Knowledge to Corpus")
+    uploaded_files = st.file_uploader(
+        "Upload Documents",
+        type=["pdf", "docx", "csv", "json", "html", "htm", "txt", "md", "log"],
+        accept_multiple_files=True,
+        help="Supported formats: PDF, Word (DOCX), CSV, JSON, HTML, Markdown, TXT",
+    )
+    if uploaded_files:
+        if st.button("📥 Ingest & Index Uploads", type="primary", use_container_width=True):
+            with st.spinner("Processing, parsing & embedding files..."):
+                os.makedirs("docs", exist_ok=True)
+                for uf in uploaded_files:
+                    target_path = os.path.join("docs", uf.name)
+                    with open(target_path, "wb") as f:
+                        f.write(uf.getbuffer())
+                build_index("docs", force_reindex=True)
+            st.success(f"Successfully indexed {len(uploaded_files)} file(s)!")
+            time.sleep(1)
+            st.rerun()
 
-    for filename, desc, icon in [
-        ("deployment_guide.md", "Canary rollouts, traffic splitting, rollback triggers.", "📘"),
-        ("platform_overview.md", "RBAC default roles, global infra, core architecture.", "⚙️"),
-        ("troubleshooting_and_faq.md", "504 timeouts, node eviction, error resolution.", "❓"),
-    ]:
-        with st.expander(f"{icon} {filename}"):
-            st.caption(desc)
-            st.code(get_doc_content(filename), language="markdown")
+    st.markdown("---")
+    st.subheader("📚 Knowledge Base Explorer")
+
+    # Discover all active documents dynamically
+    os.makedirs("docs", exist_ok=True)
+    doc_files = [
+        f for f in sorted(os.listdir("docs"))
+        if os.path.splitext(f)[1].lower() in SUPPORTED_EXTENSIONS
+    ]
+    chunk_count = collection.count()
+    st.caption(f"📁 **{len(doc_files)} Documents** | 🧩 **{chunk_count} Chunks Indexed**")
+
+    file_icons = {
+        ".pdf": "📄",
+        ".docx": "📑",
+        ".csv": "📊",
+        ".json": "🏷️",
+        ".html": "🌐",
+        ".htm": "🌐",
+        ".md": "📘",
+        ".txt": "📝",
+        ".log": "📋",
+    }
+
+    for doc_file in doc_files:
+        ext = os.path.splitext(doc_file)[1].lower()
+        icon = file_icons.get(ext, "📄")
+
+        col_exp, col_del = st.columns([5, 1])
+        with col_exp:
+            with st.expander(f"{icon} {doc_file}"):
+                content = get_doc_content(doc_file)
+                if len(content) > 1500:
+                    st.text_area(
+                        "Preview",
+                        content[:1500] + "\n\n... (truncated for display)",
+                        height=180,
+                        disabled=True,
+                        key=f"prev_{doc_file}",
+                    )
+                else:
+                    st.text_area(
+                        "Preview",
+                        content,
+                        height=180,
+                        disabled=True,
+                        key=f"prev_{doc_file}",
+                    )
+        with col_del:
+            if st.button("🗑️", key=f"del_{doc_file}", help=f"Delete {doc_file}"):
+                file_path = os.path.join("docs", doc_file)
+                if os.path.exists(file_path):
+                    os.remove(file_path)
+                    with st.spinner("Rebuilding index..."):
+                        build_index("docs", force_reindex=True)
+                    st.toast(f"Removed {doc_file} and rebuilt index!")
+                    time.sleep(0.5)
+                    st.rerun()
+
+    if st.button("🔄 Force Rebuild Index", use_container_width=True, help="Re-embeds all documents in docs/"):
+        with st.spinner("Re-indexing entire knowledge base..."):
+            build_index("docs", force_reindex=True)
+        st.success("Vector index & BM25 rebuilt!")
+        time.sleep(1)
+        st.rerun()
 
     st.markdown("---")
     st.caption("⚡ **Vector Model**: `all-MiniLM-L6-v2` | **Engine**: `Gemini 3.5/3.7 Flash Pool`")
+
 
 # --- State Management ---
 if "question" not in st.session_state:
