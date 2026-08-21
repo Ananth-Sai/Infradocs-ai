@@ -7,7 +7,10 @@ from ingest import ingest_folder
 
 load_dotenv()
 
-embed_model = SentenceTransformer("all-MiniLM-L6-v2")
+try:
+    embed_model = SentenceTransformer("all-MiniLM-L6-v2", local_files_only=True)
+except Exception:
+    embed_model = SentenceTransformer("all-MiniLM-L6-v2")
 
 client = chromadb.PersistentClient(path="./chroma_db")
 collection = client.get_or_create_collection(

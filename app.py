@@ -11,36 +11,7 @@ from ui_styles import (
     get_relevance_badge,
 )
 
-# --- Expanded Question Pools for Quick Scenarios (6-8 Questions Each) ---
-RBAC_QUESTIONS = [
-    "What are the four default roles in InfraDocs Cloud Platform RBAC?",
-    "Which RBAC role has permission to manage IAM and service accounts?",
-    "What operations are Viewer role users restricted from performing?",
-    "What are the regional endpoints and data residency in eu-central-1 and us-east-1?",
-    "How does InfraDocs Cloud Platform handle JWT session token validation and expiration?",
-    "What is the maximum allowed replication lag between us-east-1 and eu-central-1?",
-    "Which role is required to perform production canary promotions?",
-]
-
-CANARY_QUESTIONS = [
-    "What are the requirements and duration for Phase 1 of canary deployment?",
-    "What triggers an automatic rollback during canary deployment?",
-    "What percentage of traffic is shifted during Phase 2 of canary rollout?",
-    "How long does Phase 2 run before transitioning to Phase 3?",
-    "How does InfraDocs Cloud Platform handle 504 Gateway Timeouts during canary rollout?",
-    "What Prometheus error rate threshold causes a canary abort in Phase 1?",
-    "What is the rollback procedure if node eviction occurs during deployment?",
-]
-
-REFUSAL_QUESTIONS = [
-    "What is InfraDocs Cloud's policy on remote work and expense reimbursement?",
-    "How do I set up office Bluetooth printer drivers on InfraDocs Cloud?",
-    "What are the employee 401(k) retirement matching contributions?",
-    "What time does the corporate cafeteria open on weekends?",
-    "What is the company policy on bringing pets to the office?",
-    "How do I request a company-issued mobile phone or SIM card?",
-    "What is the annual gym wellness stipend amount for employees?",
-]
+from question_generator import generate_and_save_questions, load_questions
 
 # --- Page Setup & Theme ---
 st.set_page_config(
@@ -53,16 +24,16 @@ st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
 
 # --- Header ---
 st.title("⚡ InfraDocs AI — Cloud Infrastructure RAG")
-st.caption("High-precision Hybrid Retrieval (Dense Vector + BM25 Okapi + RRF) with Strict Grounded LLM Generation")
+st.caption("High-precision Grounded RAG with Dense Vector Search & Optional Hybrid BM25/RRF (temperature=0)")
 
 # --- Sidebar Configuration & Document Manager ---
 with st.sidebar:
     st.header("⚙️ Search Engine Settings")
     retrieval_mode = st.radio(
         "Retrieval Strategy",
-        options=["Hybrid (Dense + BM25 + RRF)", "Dense Only (ChromaDB)"],
+        options=["Dense Only (ChromaDB - Default)", "Hybrid (Dense + BM25 + RRF)"],
         index=0,
-        help="Hybrid fuses dense semantic vectors and sparse BM25 keywords with Reciprocal Rank Fusion.",
+        help="Dense uses semantic vector search (benchmarked baseline). Hybrid fuses vector + BM25 keywords with RRF.",
     )
     top_k = st.slider(
         "Retrieved Context Chunks (top_k)",
@@ -90,7 +61,12 @@ with st.sidebar:
                     with open(target_path, "wb") as f:
                         f.write(uf.getbuffer())
                 build_index("docs", force_reindex=True)
-            st.success(f"Successfully indexed {len(uploaded_files)} file(s)!")
+            with st.spinner("Generating fresh quick-test questions from new docs..."):
+                generate_and_save_questions()
+            st.session_state.cycle_idx_1 = 0
+            st.session_state.cycle_idx_2 = 0
+            st.session_state.cycle_idx_3 = 0
+            st.success(f"Successfully indexed {len(uploaded_files)} file(s) and generated test questions!")
             time.sleep(1)
             st.rerun()
 
@@ -122,33 +98,35 @@ with st.sidebar:
         ext = os.path.splitext(doc_file)[1].lower()
         icon = file_icons.get(ext, "📄")
 
-        col_exp, col_del = st.columns([5, 1])
-        with col_exp:
-            with st.expander(f"{icon} {doc_file}"):
-                content = get_doc_content(doc_file)
-                if len(content) > 1500:
-                    st.text_area(
-                        "Preview",
-                        content[:1500] + "\n\n... (truncated for display)",
-                        height=180,
-                        disabled=True,
-                        key=f"prev_{doc_file}",
-                    )
-                else:
-                    st.text_area(
-                        "Preview",
-                        content,
-                        height=180,
-                        disabled=True,
-                        key=f"prev_{doc_file}",
-                    )
-        with col_del:
-            if st.button("🗑️", key=f"del_{doc_file}", help=f"Delete {doc_file}"):
+        with st.expander(f"{icon} {doc_file}"):
+            content = get_doc_content(doc_file)
+            if len(content) > 1500:
+                st.text_area(
+                    "Preview",
+                    content[:1500] + "\n\n... (truncated for display)",
+                    height=180,
+                    disabled=True,
+                    key=f"prev_{doc_file}",
+                )
+            else:
+                st.text_area(
+                    "Preview",
+                    content,
+                    height=180,
+                    disabled=True,
+                    key=f"prev_{doc_file}",
+                )
+            if st.button(f"🗑️ Delete {doc_file}", key=f"del_{doc_file}", use_container_width=True):
                 file_path = os.path.join("docs", doc_file)
                 if os.path.exists(file_path):
                     os.remove(file_path)
                     with st.spinner("Rebuilding index..."):
                         build_index("docs", force_reindex=True)
+                    with st.spinner("Updating quick-test questions..."):
+                        generate_and_save_questions()
+                    st.session_state.cycle_idx_1 = 0
+                    st.session_state.cycle_idx_2 = 0
+                    st.session_state.cycle_idx_3 = 0
                     st.toast(f"Removed {doc_file} and rebuilt index!")
                     time.sleep(0.5)
                     st.rerun()
@@ -156,7 +134,12 @@ with st.sidebar:
     if st.button("🔄 Force Rebuild Index", use_container_width=True, help="Re-embeds all documents in docs/"):
         with st.spinner("Re-indexing entire knowledge base..."):
             build_index("docs", force_reindex=True)
-        st.success("Vector index & BM25 rebuilt!")
+        with st.spinner("Generating quick-test questions from indexed docs..."):
+            q_res = generate_and_save_questions()
+        st.session_state.cycle_idx_1 = 0
+        st.session_state.cycle_idx_2 = 0
+        st.session_state.cycle_idx_3 = 0
+        st.success("Vector index & BM25 rebuilt — new quick-test questions generated!")
         time.sleep(1)
         st.rerun()
 
@@ -169,44 +152,57 @@ if "question" not in st.session_state:
     st.session_state.question = ""
 if "last_results" not in st.session_state:
     st.session_state.last_results = None
-if "rbac_idx" not in st.session_state:
-    st.session_state.rbac_idx = 0
-if "canary_idx" not in st.session_state:
-    st.session_state.canary_idx = 0
-if "refusal_idx" not in st.session_state:
-    st.session_state.refusal_idx = 0
 
-def cycle_rbac():
-    q = RBAC_QUESTIONS[st.session_state.rbac_idx % len(RBAC_QUESTIONS)]
-    st.session_state.rbac_idx += 1
-    st.session_state.question = q
+# --- Dynamic Quick-Test Scenarios Loaded from Indexed Corpus ---
+_questions = load_questions()
+list_1 = _questions.get("overview", []) or ["What is the primary purpose described in the documentation?"]
+list_2 = _questions.get("operations", []) or ["What procedures or rules are defined in the documentation?"]
+edge_cases = _questions.get("edge_cases", [])
+refusal_q = _questions.get("refusal", "What is the corporate travel expense reimbursement policy?")
+list_3 = edge_cases + ([refusal_q] if isinstance(refusal_q, str) else list(refusal_q))
 
-def cycle_canary():
-    q = CANARY_QUESTIONS[st.session_state.canary_idx % len(CANARY_QUESTIONS)]
-    st.session_state.canary_idx += 1
-    st.session_state.question = q
+scenario_1_label = "📋 Architecture & Concepts (Cycle ↻)"
+scenario_2_label = "⚙️ Rules & Operations (Cycle ↻)"
+scenario_3_label = "🚫 Edge Cases & Refusals (Cycle ↻)"
 
-def cycle_refusal():
-    q = REFUSAL_QUESTIONS[st.session_state.refusal_idx % len(REFUSAL_QUESTIONS)]
-    st.session_state.refusal_idx += 1
-    st.session_state.question = q
+if "cycle_idx_1" not in st.session_state:
+    st.session_state.cycle_idx_1 = 0
+if "cycle_idx_2" not in st.session_state:
+    st.session_state.cycle_idx_2 = 0
+if "cycle_idx_3" not in st.session_state:
+    st.session_state.cycle_idx_3 = 0
+
+def cycle_slot_1():
+    if list_1:
+        st.session_state.question = list_1[st.session_state.cycle_idx_1 % len(list_1)]
+        st.session_state.cycle_idx_1 += 1
+
+def cycle_slot_2():
+    if list_2:
+        st.session_state.question = list_2[st.session_state.cycle_idx_2 % len(list_2)]
+        st.session_state.cycle_idx_2 += 1
+
+def cycle_slot_3():
+    if list_3:
+        st.session_state.question = list_3[st.session_state.cycle_idx_3 % len(list_3)]
+        st.session_state.cycle_idx_3 += 1
 
 # --- Quick Test Prompt Chips with Dynamic Question Randomizer ---
 st.markdown("##### 💡 Quick-Test Scenarios *(Click repeatedly to cycle questions)*:")
 col_a, col_b, col_c = st.columns(3)
-if col_a.button("🛡️ RBAC & Platform Arch (Cycle ↻)", use_container_width=True):
-    cycle_rbac()
-if col_b.button("🚀 Canary & Deployments (Cycle ↻)", use_container_width=True):
-    cycle_canary()
-if col_c.button("🚫 Refusal & Edge Cases (Cycle ↻)", use_container_width=True):
-    cycle_refusal()
+if col_a.button(scenario_1_label, use_container_width=True):
+    cycle_slot_1()
+if col_b.button(scenario_2_label, use_container_width=True):
+    cycle_slot_2()
+if col_c.button(scenario_3_label, use_container_width=True):
+    cycle_slot_3()
 
 # --- Search Form ---
 with st.form("search_form", clear_on_submit=False):
     input_query = st.text_input(
-        "Ask a question about InfraDocs Cloud Platform:",
+        "Ask a question about the Knowledge Base:",
         value=st.session_state.question,
-        placeholder="e.g., What are the automatic rollback triggers for canary deployment?",
+        placeholder="e.g., What are the main requirements and procedures?",
     )
     submit_clicked = st.form_submit_button("⚡ Get Grounded Answer", type="primary")
 

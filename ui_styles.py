@@ -211,6 +211,39 @@ CUSTOM_CSS = """
         font-size: 0.72rem;
         font-family: 'Fira Code', monospace;
     }
+    /* Knowledge Base Explorer: Clean full-width cards & styled actions */
+    [data-testid="stSidebar"] [data-testid="stExpander"] {
+        border: 1px solid #1e293b !important;
+        border-radius: 8px !important;
+        background: #0d1527 !important;
+        margin-bottom: 8px !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stExpander"] summary {
+        padding: 8px 12px !important;
+        min-height: 40px !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stExpander"] summary p {
+        font-size: 0.85rem !important;
+        font-weight: 500 !important;
+        color: #e2e8f0 !important;
+        margin: 0 !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stExpander"] button {
+        border: 1px solid #7f1d1d !important;
+        background-color: rgba(239, 68, 68, 0.1) !important;
+        color: #fca5a5 !important;
+        font-size: 0.8rem !important;
+        margin-top: 6px !important;
+        transition: all 0.2s ease-in-out !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stExpander"] button:hover {
+        background-color: rgba(239, 68, 68, 0.25) !important;
+        border-color: #ef4444 !important;
+        color: #ffffff !important;
+    }
 </style>
 """
 

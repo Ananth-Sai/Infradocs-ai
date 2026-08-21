@@ -1,0 +1,17 @@
+{
+  "overview": [
+    "What are the three primary geographic regions where the InfraDocs Cloud Platform (ICP) operates, and what are their respective roles?",
+    "What subscription tiers are available for ICP, and what vector storage and API call quotas are included in the Free and Pro tiers?",
+    "What are the supported authentication protocols and default RBAC roles in the Nexus Identity Service (NIS)?"
+  ],
+  "operations": [
+    "What are the error conditions, HTTP status codes, and recovery steps for `ERR_AUTH_EXPIRED_JWT` and `ERR_RATE_LIMIT_EXCEEDED`?",
+    "What are the exact traffic splitting durations and error rate thresholds for Phase 1 and Phase 2 of the Canary deployment strategy?",
+    "What is the maximum expected downtime during an ungraceful primary node failure of the PostgreSQL cluster managed by Patroni?"
+  ],
+  "edge_cases": [
+    "How does the API rate limit differ between Standard and Enterprise tiers, and which HTTP header indicates when the organization quota resets?",
+    "What are the specific SLA response times and dedicated support escalation rules for Pro Tier customers versus Severity 1 critical outages?"
+  ],
+  "refusal": "How do I configure custom VPC peering and BGP route propagation for our multi-region cloud architecture?"
+}

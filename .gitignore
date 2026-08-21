@@ -4,3 +4,5 @@ __pycache__/
 .env
 chroma_db/
 .vscode/
+*.zip
+advanced_wip/

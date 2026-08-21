@@ -10,3 +10,4 @@ toolbarMode = "minimal"
 
 [server]
 fileWatcherType = "auto"
+maxUploadSize = 50
