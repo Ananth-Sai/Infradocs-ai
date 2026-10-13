@@ -2,11 +2,11 @@
 
 # ⚡ InfraDocs AI — Cloud Infrastructure RAG Assistant
 
-[![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
-[![Gemini API](https://img.shields.io/badge/Google-Gemini%203.x-4285F4?style=for-the-badge&logo=googlegemini&logoColor=white)](https://ai.google.dev/)
-[![ChromaDB](https://img.shields.io/badge/ChromaDB-Vector%20Store-FF6B6B?style=for-the-badge)](https://www.trychroma.com/)
-[![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://streamlit.io/)
-[![License](https://img.shields.io/badge/License-MIT-9945FF?style=for-the-badge)](./LICENSE)
+[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Gemini API](https://img.shields.io/badge/Google%20Gemini-3.x-4285F4?logo=googlegemini&logoColor=white)](https://ai.google.dev/)
+[![ChromaDB](https://img.shields.io/badge/ChromaDB-Vector%20Store-FF6B6B?logo=databricks&logoColor=white)](https://www.trychroma.com/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-Studio%20UI-FF4B4B?logo=streamlit&logoColor=white)](https://streamlit.io/)
+[![License](https://img.shields.io/badge/License-MIT-10B981)](./LICENSE)
 
 <p align="center">
   A Retrieval-Augmented Generation system built with a strong emphasis on <b>measuring and proving</b><br/>
